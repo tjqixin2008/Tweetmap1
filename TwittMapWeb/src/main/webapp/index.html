@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tweet Map</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        #floating-panel {
+            top: 50px;
+            right: 50px;
+            position: absolute;
+            z-index: 1000;
+        }
+        #map {
+            height: 100%;
+        }
+        #coord {
+            padding: 5px;
+            color: white;
+            background-color: black;
+        }
+        #dropdownMain {
+            width: 90px;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
+</head>
+
+<body>
+<div id="floating-panel">
+    <select id="dropdownMain" name="skills" class="ui fluid search dropdown">
+        <option value="Clear"><a href="clear();">Clear</a></option>
+        <option value="Food"><a href="showMark('food');">Food</a></option>
+        <option value="Job"><a href="showMark('job');">Job</a></option>
+        <option value="Fashion"><a href="showMark('fashion');">Fashion</a></option>
+        <option value="Love"><a href="showMark('Love');">Love</a></option>
+        <option value="LOL"><a href="showMark('LOL');">LOL</a></option>
+    </select>
+
+</div>
+
+<div id="map"></div>
+<div id="coord"></div>
+
+
+
+
+
+
+
+<script src="map.js"></script>>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLh6Ju5C5aVc0dnbheLlXkHbQqP2xY4KY&callback=initMap"></script>
