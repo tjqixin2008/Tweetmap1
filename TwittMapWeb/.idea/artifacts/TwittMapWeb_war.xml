@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="TwittMapWeb:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="tweetmap.war">
-      <element id="artifact" artifact-name="TwittMapWeb:war exploded" />
-    </root>
-  </artifact>
-</component>

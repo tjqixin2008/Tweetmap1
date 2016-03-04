@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tweet Map</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1.0">
+    <style>
+        html, body {
+            height: 100%;
+        }
+        #floating-panel {
+            top: 50px;
+            right: 50px;
+            position: absolute;
+            z-index: 1000;
+        }
+        #map {
+            height: 100%;
+        }
+        #coord {
+            padding: 5px;
+            color: white;
+            background-color: black;
+        }
+        #dropdownMain {
+            width: 90px;
+        }
+    </style>
+
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.8/semantic.min.css">
+</head>
+
+<body>
+<div id="floating-panel">
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter
+            <span class="caret"></span></button>
+        <ul class="dropdown-menu">
+            <li><a href="javascript:clean();">Clean All</a></li>
+            <li><a href="javascript:showMark('job');">Job</a></li>
+            <li><a href="javascript:showMark('love');">Love</a></li>
+            <li><a href="javascript:showMark('food');">Food</a></li>
+            <li><a href="javascript:showMark('fashion');">Fashion</a></li>
+            <li><a href="javascript:showMark('newyork');">NewYork</a></li>
+            <li><a href="javascript:showMark('lol');">LOL</a></li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<div id="map"></div>
+<div id="coord"></div>
+
+
+<script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+
+
+<script>
+
+
+
+
+
+
+
+    function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: -34.397, lng: 150.644},
+            scrollwheel: false,
+            zoom: 8
+        });
+    }
+
+    function addMarker(location, map) {
+        // Add the marker at the clicked location, and add the next-available label
+        // from the array of alphabetical characters.
+        var marker = new google.maps.Marker({
+            position: location,
+            //label: labels[labelIndex++ % labels.length],
+            map: map
+        });
+    }
+
+    function showMark(key) {
+        //send message to server
+        console.log(key);
+        var socket = io('http://localhost');
+        socket.on('welcome', function(data){
+            console.log('welcome');                  /*log the object sent buy the server*/
+            socket.emit('keypass', {message:key, id: data.id}); /*send data to the server*/
+            socket.on('marks', function(data){    //of the client in this case.
+                console.log('location');
+                console.log(data);
+                var locations = data.message;
+                var map = new google.maps.Map(document.getElementById('map'), {
+                    center: {lat: -34.397, lng: 150.644},
+                    scrollwheel: false,
+                    zoom: 8
+                });
+                for (var i = 0; i < locations.length; i++) {
+                    addMarker(locations[i], map);
+                }
+        });
+
+    })}
+
+
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBLh6Ju5C5aVc0dnbheLlXkHbQqP2xY4KY&callback=initMap"></script>
+
+
+
