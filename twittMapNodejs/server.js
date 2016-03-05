@@ -13,44 +13,6 @@ function send404Response(response) {
     response.end();
 }
 
-
-function searchKey(keyword, socket,data) {
-    var result =[];
-    var client = new elasticsearch.Client({
-        host: 'http://search-tweet-es-htqqifxx67sifj7m47tf3ejdxa.us-east-1.es.amazonaws.com',
-        log: 'trace'
-    });
-
-    client.search({
-        index: keyword
-    }).then(function (resp) {
-        var hits = resp.hits.hits;
-        for (var i = 0; i<hits.length; i++) {
-            //console.log(hits[i]._index);
-            var longtitude = hits[i]._source.longtitude;
-            var latitude = hits[i]._source.latitude;
-            var bangalore = {lat: longtitude, lng: latitude};
-            result.push(bangalore);
-
-
-
-        }
-        socket.emit('marks', {message: result, id: data.id});
-        //return result;
-        //console.log(result.length);
-    }, function (err) {
-        console.trace(err.message);
-    });
-}
-
-
-
-
-
-
-
-
-
 function onRequest(request, response) {
     if (request.method == 'GET' && request.url == '/') {
         response.writeHead(200, {"Content-Type": "text/html"});
@@ -59,27 +21,53 @@ function onRequest(request, response) {
         send404Response(response);
     }
 }
+function searchKey(keyword, socket,data) {
+    //var result =[];
+    var client = new elasticsearch.Client({
+        host: 'http://search-tweet-es-htqqifxx67sifj7m47tf3ejdxa.us-east-1.es.amazonaws.com',
+        log: 'trace'
+    });
 
+    client.search({
+        index: keyword,
+        body: {
+            "from" : 0,
+            "size" : 300
+        }
+    }).then(function (resp) {
+        var hits = resp.hits.hits;
+        //hits = _.map(hits, function(hit) {
+        //    return hit._source;
+        //});
+        var result = [];
+        for (var i = 0; i<hits.length; i++) {
+            console.log(hits[i]);
+            var longtitude = hits[i]._source.longtitude;
+            var latitude = hits[i]._source.latitude;
+            var item = {lat: longtitude, lng: latitude, usr:hits[i]._source.user, txt:hits[i]._source.text, ul:hits[i]._source.url };
+
+            result.push(item);
+        }
+        console.log(result);
+        socket.emit('marks',{message:result, id:data.id});
+        // socket.disconnect();
+    }, function (err) {
+        socket.emit('error', err.message);
+    });
+}
 var app = http.createServer(onRequest);
-var io = require('socket.io').listen(app);
+console.log("server is now running...");
 
-io.on('connection',function(socket){
+app.listen(8080);
+var io = require('socket.io').listen(app);
+io.on('connect',function(socket){
     console.log('a user connected');
     socket.emit('welcome', { message: 'welcome!', id: socket.id });//Note that emit event name on the server matches the emit event name
 
     socket.on('keypass',function(data){    //of the client in this case.
         var key = data.message;
-        var result = searchKey(key,socket,data);
-        //console.log(result.length);
-        //socket.emit('marks', {message: result});
-
-
+        searchKey(key,socket,data);
     });
+
 });
-
-
-
-
-app.listen(8000);
-console.log("server is now running...");
 

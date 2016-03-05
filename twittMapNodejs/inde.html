@@ -40,7 +40,7 @@
         <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Filter
             <span class="caret"></span></button>
         <ul class="dropdown-menu">
-            <li><a href="javascript:clean();">Clean All</a></li>
+            <li><a href="javascript:deleteMarkers();">Clean All</a></li>
             <li><a href="javascript:showMark('job');">Job</a></li>
             <li><a href="javascript:showMark('love');">Love</a></li>
             <li><a href="javascript:showMark('food');">Food</a></li>
@@ -62,57 +62,91 @@
 <div id="coord"></div>
 
 
-<script src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 
 
 <script>
-
-
-
-
-
-
+    var socket;
+    var socket_data;
+    var markers = [];
+    var map;
+    var infowindow = null;
 
     function initMap() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-            center: {lat: -34.397, lng: 150.644},
+        map = new google.maps.Map(document.getElementById('map'), {
+            center: {lat: 41, lng: -74},
             scrollwheel: false,
-            zoom: 8
+            zoom: 3
         });
+
+
+
+        socket = io('http://localhost:8080');
+        console.log(socket);
+
+        socket.on('welcome', function(data){
+            socket_data = data;
+            console.log('welcome');                  /*log the object sent buy the server*/
+        })
     }
 
-    function addMarker(location, map) {
+    function addMarker(data, map) {
         // Add the marker at the clicked location, and add the next-available label
         // from the array of alphabetical characters.
+        var contentString = '<div id="content">'+
+                '<div id="siteNotice">'+
+                '</div>'+
+                '<h1 id="firstHeading" class="firstHeading">data.usr</h1>'+
+                '<div id="bodyContent">'+ '<p>'+data.txt+'</p>'+'<p>'+data.ul+'</p>'+
+                '</div>'+
+                '</div>';
+
+
+        var location = {lat: data.lat, lng : data.lng};
         var marker = new google.maps.Marker({
             position: location,
-            //label: labels[labelIndex++ % labels.length],
             map: map
         });
+        marker.addListener('click', function() {
+            if (infowindow) infowindow.setMap(null);
+            infowindow = new google.maps.InfoWindow({
+                content: contentString
+            });
+            infowindow.open(map, marker);
+        });
+        markers.push(marker);
     }
-
+    function setMapOnAll(map) {
+        console.log(markers.length);
+        for (var i = 0; i < markers.length; i++) {
+            markers[i].setMap(map);
+        }
+    }
+    function clearMarkers() {
+        setMapOnAll(null);
+    }
+    function deleteMarkers() {
+        clearMarkers();
+        markers = [];
+    }
     function showMark(key) {
         //send message to server
+        deleteMarkers();
+        if (infowindow) infowindow.setMap(null);
         console.log(key);
-        var socket = io('http://localhost');
-        socket.on('welcome', function(data){
-            console.log('welcome');                  /*log the object sent buy the server*/
-            socket.emit('keypass', {message:key, id: data.id}); /*send data to the server*/
-            socket.on('marks', function(data){    //of the client in this case.
-                console.log('location');
-                console.log(data);
-                var locations = data.message;
-                var map = new google.maps.Map(document.getElementById('map'), {
-                    center: {lat: -34.397, lng: 150.644},
-                    scrollwheel: false,
-                    zoom: 8
-                });
-                for (var i = 0; i < locations.length; i++) {
-                    addMarker(locations[i], map);
-                }
+
+        socket.emit('keypass', {message:key, id: socket_data.id}); /*send data to the server*/
+        socket.on('marks', function(data){    //of the client in this case.
+            console.log('location');
+            data = data.message;
+            for (var i = 0; i < data.length; i++) {
+                console.log(location);
+                addMarker(data[i], map);
+            }
+            setMapOnAll(map);
         });
 
-    })}
+        }
 
 
 </script>
