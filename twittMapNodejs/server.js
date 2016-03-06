@@ -1,6 +1,4 @@
-/**
- * Created by fmy9209 on 3/3/16.
- */
+
 var http = require('http');
 var fs = require('fs');
 var elasticsearch = require('elasticsearch');
@@ -24,7 +22,7 @@ function onRequest(request, response) {
 function searchKey(keyword, socket,data) {
     //var result =[];
     var client = new elasticsearch.Client({
-        host: 'http://search-tweet-es-htqqifxx67sifj7m47tf3ejdxa.us-east-1.es.amazonaws.com',
+        host: 'http://search-searchtweet-kdp4noucxrgspwb7h5cu5ydc2m.us-east-1.es.amazonaws.com',
         log: 'trace'
     });
 

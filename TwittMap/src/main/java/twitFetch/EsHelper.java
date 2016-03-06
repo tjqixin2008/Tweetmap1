@@ -12,9 +12,6 @@ import twitter4j.Status;
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-/**
- * Created by fmy9209 on 3/1/16.
- */
 public class EsHelper {
     private Keywords keywordHelper = new Keywords();
 
@@ -26,7 +23,7 @@ public class EsHelper {
             try {
                 JestClientFactory factory = new JestClientFactory();
                 factory.setHttpClientConfig(new HttpClientConfig
-                        .Builder("http://search-tweet-es-htqqifxx67sifj7m47tf3ejdxa.us-east-1.es.amazonaws.com")
+                        .Builder("http://search-searchtweet-kdp4noucxrgspwb7h5cu5ydc2m.us-east-1.es.amazonaws.com")
                         .multiThreaded(true)
                         .build());
                 client = factory.getObject();

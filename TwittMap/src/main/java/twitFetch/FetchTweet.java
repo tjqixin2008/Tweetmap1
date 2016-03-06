@@ -17,10 +17,10 @@ public class FetchTweet {
 
         ConfigurationBuilder cb = new ConfigurationBuilder();
         cb.setDebugEnabled(true)
-                .setOAuthConsumerKey("eXFwbCpyX7zP0NLVuz7uvclqY")
-                .setOAuthConsumerSecret("gSvNSjlgFr8EYfN6Xai57ycpjFviB5WxO3VioswWrWsovn6s9v")
-                .setOAuthAccessToken("543289094-noBqmBHhjwohxEQoU4THBN0vFuXCsnipySFzFFlu")
-                .setOAuthAccessTokenSecret("vPWss85u8I4YYH0exDZCVuh3kgp3eXPqReSR9AfAS3ivG");
+                .setOAuthConsumerKey("1iTOUnRyoc0pP5QZda9fiToYW")
+                .setOAuthConsumerSecret("qNpusO5WBETNUUS70SzIokWdrhTCSvBdFlYAQO4EFsURl1CC3")
+                .setOAuthAccessToken("703297899938115584-E8BZGgbklgk368F4ncfO2uyFYfcO3kv")
+                .setOAuthAccessTokenSecret("eQq6dgUccrWauTyec7x10hXyF2IBSYkCtwZ8iC6PsqwCX");
 
         TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
 
